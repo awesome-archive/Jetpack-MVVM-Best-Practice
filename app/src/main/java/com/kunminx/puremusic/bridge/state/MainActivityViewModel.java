@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.kunminx.puremusic.bridge.status;
+package com.kunminx.puremusic.bridge.state;
 
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 /**
@@ -26,7 +27,17 @@ import androidx.lifecycle.ViewModel;
  * <p>
  * Create by KunMinX at 19/10/29
  */
-public class SearchViewModel extends ViewModel {
+public class MainActivityViewModel extends ViewModel {
 
+    //TODO 演示 LiveData 来用作 DataBinding 数据绑定的情况。
+    // 记得在视图控制器中要加入 mBinding.setLifecycleOwner(this);
+    //详见 https://xiaozhuanlan.com/topic/9816742350
 
+    public final MutableLiveData<Boolean> openDrawer = new MutableLiveData<>();
+
+    public final MutableLiveData<Boolean> allowDrawerOpen = new MutableLiveData<>();
+
+    {
+        allowDrawerOpen.setValue(true);
+    }
 }

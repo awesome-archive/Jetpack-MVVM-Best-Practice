@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package com.kunminx.puremusic.bridge.status;
-
-import androidx.databinding.ObservableField;
-import androidx.lifecycle.ViewModel;
+package com.kunminx.puremusic.data.usecase.base;
 
 /**
- * TODO tip：每个页面都要单独准备一个 statusViewModel，
- * 来托管 DataBinding 绑定的临时状态，以及视图控制器重建时状态的恢复。
- *
- * 如果这样说还不理解的话，详见 https://xiaozhuanlan.com/topic/9816742350
- * <p>
- * Create by KunMinX at 19/10/29
+ * Interface for schedulers, see {@link UseCaseThreadPoolScheduler}.
  */
-public class DrawerViewModel extends ViewModel {
+public interface UseCaseScheduler {
 
-    public final ObservableField<String> loadPage = new ObservableField<>();
+    void execute(Runnable runnable);
 
+    <V extends UseCase.ResponseValue> void notifyResponse(final V response,
+                                                          final UseCase.UseCaseCallback<V> useCaseCallback);
+
+    <V extends UseCase.ResponseValue> void onError(
+            final UseCase.UseCaseCallback<V> useCaseCallback);
 }

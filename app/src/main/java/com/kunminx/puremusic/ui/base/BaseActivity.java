@@ -26,6 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.kunminx.architecture.data.manager.NetworkStateManager;
 import com.kunminx.architecture.utils.AdaptScreenUtils;
 import com.kunminx.architecture.utils.BarUtils;
 import com.kunminx.architecture.utils.ScreenUtils;
@@ -47,6 +48,8 @@ public class BaseActivity extends AppCompatActivity {
         BarUtils.setStatusBarLightMode(this, true);
 
         mSharedViewModel = getAppViewModelProvider().get(SharedViewModel.class);
+
+        getLifecycle().addObserver(NetworkStateManager.getInstance());
 
     }
 
