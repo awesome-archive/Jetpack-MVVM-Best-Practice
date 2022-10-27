@@ -1,21 +1,8 @@
-/*
- * Copyright 2018-2019 KunMinX
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.kunminx.architecture.utils;
 
+import static android.Manifest.permission.WRITE_SETTINGS;
+
+import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -23,7 +10,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Point;
-import android.os.Build;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.view.Surface;
@@ -34,8 +20,6 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
-
-import static android.Manifest.permission.WRITE_SETTINGS;
 
 /**
  * <pre>
@@ -59,13 +43,7 @@ public final class ScreenUtils {
     public static int getScreenWidth() {
         WindowManager wm = (WindowManager) Utils.getApp().getSystemService(Context.WINDOW_SERVICE);
         Point point = new Point();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            //noinspection ConstantConditions
-            wm.getDefaultDisplay().getRealSize(point);
-        } else {
-            //noinspection ConstantConditions
-            wm.getDefaultDisplay().getSize(point);
-        }
+        wm.getDefaultDisplay().getRealSize(point);
         return point.x;
     }
 
@@ -77,13 +55,7 @@ public final class ScreenUtils {
     public static int getScreenHeight() {
         WindowManager wm = (WindowManager) Utils.getApp().getSystemService(Context.WINDOW_SERVICE);
         Point point = new Point();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            //noinspection ConstantConditions
-            wm.getDefaultDisplay().getRealSize(point);
-        } else {
-            //noinspection ConstantConditions
-            wm.getDefaultDisplay().getSize(point);
-        }
+        wm.getDefaultDisplay().getRealSize(point);
         return point.y;
     }
 
@@ -133,10 +105,10 @@ public final class ScreenUtils {
         Window window = activity.getWindow();
         if ((window.getAttributes().flags & fullScreenFlag) == fullScreenFlag) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN
-                    | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+                | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         } else {
             window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN
-                    | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+                | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
     }
 
@@ -152,12 +124,32 @@ public final class ScreenUtils {
     }
 
     /**
+     * Return whether screen is landscape.
+     *
+     * @return {@code true}: yes<br>{@code false}: no
+     */
+    public static boolean isLandscape() {
+        return Utils.getApp().getResources().getConfiguration().orientation
+            == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    /**
      * Set the screen to landscape.
      *
      * @param activity The activity.
      */
     public static void setLandscape(@NonNull final AppCompatActivity activity) {
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    }
+
+    /**
+     * Return whether screen is portrait.
+     *
+     * @return {@code true}: yes<br>{@code false}: no
+     */
+    public static boolean isPortrait() {
+        return Utils.getApp().getResources().getConfiguration().orientation
+            == Configuration.ORIENTATION_PORTRAIT;
     }
 
     /**
@@ -170,35 +162,14 @@ public final class ScreenUtils {
     }
 
     /**
-     * Return whether screen is landscape.
-     *
-     * @return {@code true}: yes<br>{@code false}: no
-     */
-    public static boolean isLandscape() {
-        return Utils.getApp().getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE;
-    }
-
-    /**
-     * Return whether screen is portrait.
-     *
-     * @return {@code true}: yes<br>{@code false}: no
-     */
-    public static boolean isPortrait() {
-        return Utils.getApp().getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_PORTRAIT;
-    }
-
-    /**
      * Return the rotation of screen.
      *
      * @param activity The activity.
      * @return the rotation of screen
      */
+    @SuppressLint("SwitchIntDef")
     public static int getScreenRotation(@NonNull final AppCompatActivity activity) {
         switch (activity.getWindowManager().getDefaultDisplay().getRotation()) {
-            case Surface.ROTATION_0:
-                return 0;
             case Surface.ROTATION_90:
                 return 90;
             case Surface.ROTATION_180:
@@ -232,7 +203,9 @@ public final class ScreenUtils {
         decorView.setDrawingCacheEnabled(true);
         decorView.setWillNotCacheDrawing(false);
         Bitmap bmp = decorView.getDrawingCache();
-        if (bmp == null) return null;
+        if (bmp == null) {
+            return null;
+        }
         DisplayMetrics dm = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
         Bitmap ret;
@@ -241,11 +214,11 @@ public final class ScreenUtils {
             int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
             int statusBarHeight = resources.getDimensionPixelSize(resourceId);
             ret = Bitmap.createBitmap(
-                    bmp,
-                    0,
-                    statusBarHeight,
-                    dm.widthPixels,
-                    dm.heightPixels - statusBarHeight
+                bmp,
+                0,
+                statusBarHeight,
+                dm.widthPixels,
+                dm.heightPixels - statusBarHeight
             );
         } else {
             ret = Bitmap.createBitmap(bmp, 0, 0, dm.widthPixels, dm.heightPixels);
@@ -261,9 +234,25 @@ public final class ScreenUtils {
      */
     public static boolean isScreenLock() {
         KeyguardManager km =
-                (KeyguardManager) Utils.getApp().getSystemService(Context.KEYGUARD_SERVICE);
-        //noinspection ConstantConditions
+            (KeyguardManager) Utils.getApp().getSystemService(Context.KEYGUARD_SERVICE);
         return km.inKeyguardRestrictedInputMode();
+    }
+
+    /**
+     * Return the duration of sleep.
+     *
+     * @return the duration of sleep.
+     */
+    public static int getSleepDuration() {
+        try {
+            return Settings.System.getInt(
+                Utils.getApp().getContentResolver(),
+                Settings.System.SCREEN_OFF_TIMEOUT
+            );
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+            return -123;
+        }
     }
 
     /**
@@ -275,27 +264,10 @@ public final class ScreenUtils {
     @RequiresPermission(WRITE_SETTINGS)
     public static void setSleepDuration(final int duration) {
         Settings.System.putInt(
-                Utils.getApp().getContentResolver(),
-                Settings.System.SCREEN_OFF_TIMEOUT,
-                duration
+            Utils.getApp().getContentResolver(),
+            Settings.System.SCREEN_OFF_TIMEOUT,
+            duration
         );
-    }
-
-    /**
-     * Return the duration of sleep.
-     *
-     * @return the duration of sleep.
-     */
-    public static int getSleepDuration() {
-        try {
-            return Settings.System.getInt(
-                    Utils.getApp().getContentResolver(),
-                    Settings.System.SCREEN_OFF_TIMEOUT
-            );
-        } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
-            return -123;
-        }
     }
 
     /**
@@ -305,7 +277,7 @@ public final class ScreenUtils {
      */
     public static boolean isTablet() {
         return (Utils.getApp().getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK)
-                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+            & Configuration.SCREENLAYOUT_SIZE_MASK)
+            >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 }

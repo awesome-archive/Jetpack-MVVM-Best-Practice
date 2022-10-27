@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 KunMinX
+ * Copyright 2018-present KunMinX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.kunminx.architecture.ui.adapter;
 
-
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -29,12 +28,12 @@ import androidx.viewpager.widget.PagerAdapter;
  */
 public class CommonViewPagerAdapter extends PagerAdapter {
 
-    private int count;
-    private boolean enableDestroyItem;
-    private String[] title;
+    private final int count;
+    private final boolean enableDestroyItem;
+    private final String[] title;
 
-    public CommonViewPagerAdapter(int count, boolean enableDestroyItem, String[] title) {
-        this.count = count;
+    public CommonViewPagerAdapter(boolean enableDestroyItem, String[] title) {
+        this.count = title.length;
         this.enableDestroyItem = enableDestroyItem;
         this.title = title;
     }

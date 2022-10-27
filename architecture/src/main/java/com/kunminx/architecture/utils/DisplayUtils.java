@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 KunMinX
+ * Copyright 2018-present KunMinX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ public class DisplayUtils {
         return (int) (pxValue / scale + 0.5f);
     }
 
-
     /**
      * convert dp to its equivalent px
      * <p>
@@ -43,7 +42,6 @@ public class DisplayUtils {
         return (int) (dipValue * scale + 0.5f);
     }
 
-
     /**
      * convert px to its equivalent sp
      * <p>
@@ -53,7 +51,6 @@ public class DisplayUtils {
         final float fontScale = Utils.getApp().getResources().getDisplayMetrics().scaledDensity;
         return (int) (pxValue / fontScale + 0.5f);
     }
-
 
     /**
      * convert sp to its equivalent px
